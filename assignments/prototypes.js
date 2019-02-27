@@ -138,3 +138,86 @@ console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+
+Humanoid.prototype.applyDamage = function(damage) {
+  this.healthPoints = this.healthPoints - damage;
+  this.takeDamage();
+  if (this.healthPoints <= 0) {
+    return this.destroy();
+  } else {
+    return "";
+  }
+}
+
+function Villain(villain) {
+  Humanoid.call(this, villain);
+  this.spells = villain.spells;
+  this.cast = function(spellName, target) {
+    return `${this.name} casts ${spellName} at ${target.name}. ` +
+      target.applyDamage(this.spells[spellName]);
+  }
+}
+
+Villain.prototype = Object.create(Humanoid.prototype);
+
+function Hero(hero) {
+  Humanoid.call(this, hero);
+  this.attack = function(target) {
+    let message = `${this.name} attacks ${target.name}.`;
+    let damage;
+    if (this.healthPoints <= 8) {
+      message += ` ${this.name}'s attack is weakened.`
+      damage = 5;
+    } else {
+      damage = 10;
+    }
+    return message + " " + target.applyDamage(damage);
+  }
+}
+
+Hero.prototype = Object.create(Humanoid.prototype);
+
+const hero = new Hero({
+  createdAt: new Date(),
+  dimensions: {
+    length: 2,
+    width: 2,
+    height: 2,
+  },
+  healthPoints: 15,
+  name: 'Sir Loin',
+  team: 'Gyros',
+  weapons: [
+    'Giant Sword',
+    'Shield',
+  ],
+  language: 'Common Tongue',
+});
+
+const villain = new Villain({
+  createdAt: new Date(),
+  dimensions: {
+    length: 1,
+    width: 2,
+    height: 4,
+  },
+  healthPoints: 12,
+  name: 'Tim',
+  team: 'Birdge People',
+  weapons: [
+    'Dagger',
+  ],
+  language: 'Elvish',
+  spells: {
+    fireball: 10,
+    lightning: 4,
+          }
+});
+
+console.log("\n")
+console.log(hero.greet());
+console.log(villain.greet());
+console.log(hero.attack(villain));
+console.log(villain.cast("fireball", hero));
+console.log(hero.attack(villain));
+
