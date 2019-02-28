@@ -20,9 +20,10 @@ function GameObject(object) {
   this.createdAt = object.createdAt;
   this.name = object.name;
   this.dimensions = object.dimensions;
-  this.destroy = function() {
-    return `${this.name} was removed from the game.`
-  }
+}
+
+GameObject.prototype.destroy = function() {
+  return `${this.name} was removed from the game.`
 }
 
 /*
@@ -35,12 +36,14 @@ function GameObject(object) {
 function CharacterStats(character) {
   GameObject.call(this, character);
   this.healthPoints = character.healthPoints;
-  this.takeDamage = function() {
-    return `${this.name} took damage.`;
-  }
 }
 
 CharacterStats.prototype = Object.create(GameObject.prototype);
+
+CharacterStats.prototype.takeDamage = function() {
+  return `${this.name} took damage.`;
+}
+
 
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
@@ -57,13 +60,14 @@ function Humanoid(humanoid) {
   this.team = humanoid.team;
   this.weapons = humanoid.weapons;
   this.language = humanoid.language;
-  this.greet = function() {
-    return `${this.name} offers a greeting in ${this.language}`;
-  }
 }
 
-Humanoid.prototype = Object.create(CharacterStats.prototype)
- 
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+
+Humanoid.prototype.greet = function() {
+  return `${this.name} offers a greeting in ${this.language}`;
+}
+
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
   * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
@@ -152,30 +156,32 @@ Humanoid.prototype.applyDamage = function(damage) {
 function Villain(villain) {
   Humanoid.call(this, villain);
   this.spells = villain.spells;
-  this.cast = function(spellName, target) {
-    return `${this.name} casts ${spellName} at ${target.name}. ` +
-      target.applyDamage(this.spells[spellName]);
-  }
 }
 
 Villain.prototype = Object.create(Humanoid.prototype);
 
+Villain.prototype.cast = function(spellName, target) {
+  return `${this.name} casts ${spellName} at ${target.name}. ` +
+    target.applyDamage(this.spells[spellName]);
+}
+
 function Hero(hero) {
   Humanoid.call(this, hero);
-  this.attack = function(target) {
-    let message = `${this.name} attacks ${target.name}.`;
-    let damage;
-    if (this.healthPoints <= 8) {
-      message += ` ${this.name}'s attack is weakened.`
-      damage = 5;
-    } else {
-      damage = 10;
-    }
-    return message + " " + target.applyDamage(damage);
-  }
 }
 
 Hero.prototype = Object.create(Humanoid.prototype);
+
+Hero.prototype.attack = function(target) {
+  let message = `${this.name} attacks ${target.name}.`;
+  let damage;
+  if (this.healthPoints <= 8) {
+    message += ` ${this.name}'s attack is weakened.`
+    damage = 5;
+  } else {
+    damage = 10;
+  }
+  return message + " " + target.applyDamage(damage);
+}
 
 const hero = new Hero({
   createdAt: new Date(),
@@ -211,7 +217,7 @@ const villain = new Villain({
   spells: {
     fireball: 10,
     lightning: 4,
-          }
+  }
 });
 
 console.log("\n")
